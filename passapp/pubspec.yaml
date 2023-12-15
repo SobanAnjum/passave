@@ -10,7 +10,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_slidable: ^3.0.1
-  
+  flutter_toastr: ^1.0.3
+  hive:
+  hive_flutter:
 
 dev_dependencies:
   flutter_test:
@@ -24,6 +26,9 @@ flutter:
     - family: Neraphic
       fonts:
         - asset: assets/fonts/Neraphic.otf
+    - family: Logo
+      fonts:
+        - asset: assets/fonts/LEMONMILK-Bold.otf
   assets:
      - assets/images/splashbg.png
      - assets/images/Logo.png

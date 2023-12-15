@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:passapp/screens/splashscreen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  var box = Hive.openBox("Users");
+  var Passwords = Hive.openBox("Passwords");
+  var Platforms = Hive.openBox("Platforms");
+
   runApp(const MainApp());
 }
 

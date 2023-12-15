@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
+import 'package:passapp/components/emptyCheck.dart';
 import 'package:passapp/screens/login.dart';
+import 'package:flutter_toastr/flutter_toastr.dart';
+
+final userName = TextEditingController();
+final passWord = TextEditingController();
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
 
   @override
   State<Signup> createState() => _SignupState();
+}
+
+List Users = [];
+List userList() {
+  Users.clear();
+  var box = Hive.box("Users");
+  Users = box.values.toList();
+  return Users;
 }
 
 class _SignupState extends State<Signup> {
@@ -16,7 +30,7 @@ class _SignupState extends State<Signup> {
         child: Column(
           children: [
             SizedBox(
-              height: 30,
+              height: 100,
             ),
             Center(
               child: Image.asset(
@@ -29,7 +43,11 @@ class _SignupState extends State<Signup> {
             ),
             const Text(
               "Register",
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Logo',
+                  color: Colors.red),
             ),
             const SizedBox(
               height: 30,
@@ -54,6 +72,7 @@ class _SignupState extends State<Signup> {
             Container(
               width: 250,
               child: TextField(
+                controller: userName,
                 decoration: InputDecoration(
                     prefixIcon: const Icon(
                       Icons.contacts,
@@ -71,6 +90,9 @@ class _SignupState extends State<Signup> {
             Container(
                 width: 250,
                 child: TextField(
+                  inputFormatters: [],
+                  obscureText: true,
+                  controller: passWord,
                   decoration: InputDecoration(
                       prefixIcon: const Icon(
                         Icons.lock,
@@ -85,24 +107,61 @@ class _SignupState extends State<Signup> {
               height: 30,
             ),
             InkWell(
+                onTap: () {
+                  if (isEmpty(userName) || isEmpty(passWord)) {
+                    FlutterToastr.show(
+                        "Please Check your Input Fields", context);
+                  } else {
+                    var box = Hive.box("Users");
+                    bool found = false;
+                    userList();
+
+                    for (int i = 0; i < userList().length; i++) {
+                      if (userList()[i][0] == userName.text) {
+                        found = true;
+                      } else {
+                        found = false;
+                      }
+                    }
+                    if (found) {
+                      FlutterToastr.show(
+                        "User Already Exists",
+                        context,
+                        duration: 2,
+                      );
+                    } else {
+                      print("enter login no exist");
+                      box.add(["${userName.text}", "${passWord.text}"]);
+                      FlutterToastr.show(
+                        "Created new User",
+                        context,
+                        duration: 2,
+                      );
+                    }
+                    userName.clear();
+                    passWord.clear();
+                  }
+                },
                 child: Container(
-              width: 100,
-              height: 50,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-                color: Colors.amber[400],
-              ),
-              child: const Center(
-                  child: Text(
-                "Register",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )),
-            )),
+                  width: 100,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100),
+                    color: Colors.amber[400],
+                  ),
+                  child: const Center(
+                      child: Text(
+                    "Register",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  )),
+                )),
             const SizedBox(
               height: 30,
             ),
             InkWell(
               onTap: () {
+                userName.clear();
+                passWord.clear();
                 Navigator.push(
                     context,
                     MaterialPageRoute(
